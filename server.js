@@ -23,9 +23,26 @@ app.get('/api/notes', (req, res) =>
 
 app.post('/api/notes', (req, res) => {
   const { body } = req;
+  req.body.id = uuidv4();
   notesDB.push(body);
-  res.json(notesDB)
+  res.json(req.body)
 });
+
+app.delete('/api/notes/:id', (req, res) => {
+  const noteId = (id, notesArray) => {
+    const result = notesArray.filter(currentNote => currentNote.id === id)[0];
+    return result;
+  };
+  const deleteNote = (currentNote, notesArray) => {
+    const index = notesArray.indexOf(currentNote);
+    notesArray.splice(index, 1);
+    path.join(__dirname, '../db/db.json'),
+      JSON.stringify({ notes: notesArray }, null, 2)
+  };
+  const noteDelete = noteId(req.params.id, notesDB);
+  deleteNote(noteDelete, notesDB);
+  res.json();
+})
 
 
 app.listen(PORT, () => {
